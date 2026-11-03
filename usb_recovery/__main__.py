@@ -5,6 +5,7 @@ import sys
 import zipfile
 from .analyze import analyze, bounded_read
 from .simulate import simulate
+from .pe import inspect_pe
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description='Offline USB recovery tools; no device writes')
@@ -16,12 +17,18 @@ def main(argv=None):
     a.add_argument('--marker', type=float, help='Message seconds after first selected USB frame')
     s = sub.add_parser('simulate', help='Offline replay of explicit JSON rules')
     s.add_argument('rules'); s.add_argument('requests'); s.add_argument('--out', required=True)
+    pe = sub.add_parser('inspect-pe', help='Read-only PE headers, imports and keyword locations')
+    pe.add_argument('executable'); pe.add_argument('--out', required=True)
+    pe.add_argument('--needle', action='append', default=[])
     args = parser.parse_args(argv)
     try:
         if args.command == 'analyze':
             if args.marker is not None and args.marker < 0: parser.error('--marker must be nonnegative')
             r = analyze(args.source,args.out,args.bus,args.device,args.compare,args.input_file,args.marker)
             print(f"Report: {Path(args.out)/'report.md'} ({r['usb_frames']} USB frames)")
+        elif args.command == 'inspect-pe':
+            inspect_pe(args.executable, args.out, args.needle)
+            print(f'PE report: {Path(args.out)/"pe_report.md"}')
         else:
             load = lambda p: json.loads(bounded_read(p,4*1024*1024).decode('utf-8-sig'))
             state = simulate(load(args.rules),load(args.requests),args.out)

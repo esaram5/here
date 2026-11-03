@@ -7,7 +7,7 @@ PC에서 복호화하는지, 장비가 복호화하는지, 어느 함수에서 �
 ## 현재 상태
 
 - v1.0 수집기 + v0.2 분석기: 결과 ZIP/PCAP/PCAPNG 분석, 스트림 추출, 반복 실행 비교, 오프라인 상태 기반 모사.
-- 실제 Windows 장비에서의 실행 검증은 아직 수행하지 않았습니다.
+- [자동 테스트 32개 및 CLI 검증 통과](docs/VALIDATION.md). 실제 Windows 장비에서의 실행 검증은 아직 수행하지 않았습니다.
 - 오프라인 응답 규칙 모사는 구현했습니다. 실제 USB 응답 교체, 메모리 덤프, 복호화 기능은 아직 없습니다.
 - 알려진 API 이름 검색은 단서 수집이며 import table 분석이나 동적 호출 추적이 아닙니다.
 
@@ -20,6 +20,17 @@ py -3 -m usb_recovery analyze results_....zip --out analysis_first
 py -3 -m unittest discover -s tests -v
 ```
 
+## EXE 리버싱 준비
+
+USB 분석 이후 [리버싱 조사 절차와 도구 비교](docs/REVERSING.md)를 사용할 수 있습니다.
+`inspect-pe`는 EXE를 실행하지 않고 PE/import/문자열 위치를 분석합니다.
+
+```powershell
+py -3 -m usb_recovery inspect-pe "C:\path\writer.exe" --out static_writer --needle "이미 쓰여 있음"
+```
+
+`Inspect.cmd` 위에 EXE를 드래그해도 됩니다. 실제 장비 응답 패치나 대상 프로그램 실행은 하지 않습니다.
+
 ## 파일
 
 | 파일 | 역할 |
@@ -28,6 +39,10 @@ py -3 -m unittest discover -s tests -v
 | `Collect.ps1` | PowerShell 진단 및 캡처 스크립트 |
 | `README_KO.txt` | 상세 실행 안내 |
 | `README.md` | 프로젝트 개요 및 진행 계획 |
+| `Analyze.cmd` | 결과 ZIP 분석 실행 |
+| `Inspect.cmd` | EXE/DLL 정적 분석 실행 |
+| `usb_recovery/` | Python 분석기 및 오프라인 모사 |
+| `tests/`, `examples/` | 자동 테스트 및 가상 데이터 |
 
 ## 준비 및 실행
 
