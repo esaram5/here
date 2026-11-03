@@ -5,3 +5,9 @@ results_*.zip
 captures/
 input_data/
 recovered_data/
+
+analysis_*/
+simulation_*/
+__pycache__/
+*.pyc
+static_*/
