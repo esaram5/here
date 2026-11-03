@@ -1,0 +1,7 @@
+results_*/
+results_*.zip
+*.pcap
+*.pcapng
+captures/
+input_data/
+recovered_data/
